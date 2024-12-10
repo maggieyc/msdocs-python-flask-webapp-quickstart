@@ -27,7 +27,7 @@ resource acr 'Microsoft.ContainerRegistry/registries@2021-09-01' = {
     adminUserEnabled: acrAdminUserEnabled
   }
 }
-/*
+
 // Store ACR Username as a secret
 resource secretAdminUserName 'Microsoft.KeyVault/vaults/secrets@2023-02-01' = {
   name: adminCredentialsKeyVaultSecretUserName
@@ -46,7 +46,6 @@ resource secretAdminPassword1 'Microsoft.KeyVault/vaults/secrets@2023-02-01' = {
   }
 }
 
-*/
 //output credentials object = {
 //  username: acr.listCredentials().username
 //  password: acr.listCredentials().passwords[0].value
