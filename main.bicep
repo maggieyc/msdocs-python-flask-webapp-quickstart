@@ -16,14 +16,13 @@ param appServicePlanName string
 @description('Name of the Web App')
 param webAppName string
 
-
-
 @description('Name of the Key Vault')
 param keyVaultName string
 
 @description('Enable vault for deployment')
 param enableVaultForDeployment bool = true
 
+/*
 @description('Key Vault role assignments')
 param roleAssignments array = [
 
@@ -46,13 +45,27 @@ param roleAssignments array = [
   }
 
 ]
+*/
+@description('Key Vault role assignments')
+param roleAssignments array = [
+  {
+    principalId: '4633458b-17de-408a-b874-0445c86b69e6'
+    roleDefinitionIdOrName: 'Key Vault Secrets User'
+    principalType: 'ServicePrincipal'
+  }
+
+  {
+    principalId: 'a03130df-486f-46ea-9d5c-70522fe056de' // Group.
+    roleDefinitionIdOrName: 'Key Vault Administrator'
+    principalType: 'Group'
+  }
+]
 
 @description('Name of the Key Vault secret for ACR Username')
 param acrAdminUserNameSecretName string = 'acrAdminUserName'
 
 @description('Name of the Key Vault secret for ACR Password')
 param acrAdminUserPasswordSecretName string = 'acrAdminUserPassword1'
-
 
 module keyVault './modules/key-vault.bicep' = {
   name: 'keyVaultModule'
@@ -65,7 +78,6 @@ module keyVault './modules/key-vault.bicep' = {
   }
 }
 
-
 module acr './modules/acr.bicep' = {
   name: 'acrModule'
   params: {
@@ -77,7 +89,6 @@ module acr './modules/acr.bicep' = {
     adminCredentialsKeyVaultSecretUserPassword1: acrAdminUserPasswordSecretName
   }
 }
-
 
 module appServicePlan './modules/asp.bicep' = {
   name: 'appServicePlanModule'
