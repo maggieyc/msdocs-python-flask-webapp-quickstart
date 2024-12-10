@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "West Europe"
+    },
+    "containerRegistryName": {
+      "value": "maggieContainerRegistry"
+    },
+    "containerRegistryImageName": {
+      "value": "flask-demo"
+    },
+    "containerRegistryImageVersion": {
+      "value": "main"
+    },
+    "appServicePlanName": {
+      "value": "MaggieAppServicePlan"
+    },
+    "webAppName": {
+      "value": "MaggieWebApp"
+      
+    },
+    "keyVaultName": {
+      "value": "maggie-kv-2"
+    }
+  }
+}
