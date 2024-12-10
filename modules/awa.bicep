@@ -14,11 +14,13 @@ param dockerRegistryServerUserName string
 @secure()
 param dockerRegistryServerPassword string
 
+
 var dockerAppSettings = {
   DOCKER_REGISTRY_SERVER_URL: dockerRegistryServerUrl
   DOCKER_REGISTRY_SERVER_USERNAME: dockerRegistryServerUserName
   DOCKER_REGISTRY_SERVER_PASSWORD: dockerRegistryServerPassword
 }
+
 
 resource webApp 'Microsoft.Web/sites@2021-02-01' = {
   name: name
@@ -38,4 +40,5 @@ resource webApp 'Microsoft.Web/sites@2021-02-01' = {
       ]
     }
   }
+  
 }

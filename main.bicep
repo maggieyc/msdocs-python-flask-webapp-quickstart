@@ -16,6 +16,8 @@ param appServicePlanName string
 @description('Name of the Web App')
 param webAppName string
 
+
+
 @description('Name of the Key Vault')
 param keyVaultName string
 
@@ -24,6 +26,7 @@ param enableVaultForDeployment bool = true
 
 @description('Key Vault role assignments')
 param roleAssignments array = [
+
   {
     principalId: '7200f83e-ec45-4915-8c52-fb94147cfe5a'
     roleDefinitionIdOrName: 'Key Vault Secrets User'
@@ -41,6 +44,7 @@ param roleAssignments array = [
     roleDefinitionIdOrName: 'Key Vault Secrets User'
     principalType: 'ServicePrincipal'
   }
+
 ]
 
 @description('Name of the Key Vault secret for ACR Username')
@@ -48,6 +52,7 @@ param acrAdminUserNameSecretName string = 'acrAdminUserName'
 
 @description('Name of the Key Vault secret for ACR Password')
 param acrAdminUserPasswordSecretName string = 'acrAdminUserPassword1'
+
 
 module keyVault './modules/key-vault.bicep' = {
   name: 'keyVaultModule'
@@ -60,7 +65,8 @@ module keyVault './modules/key-vault.bicep' = {
   }
 }
 
-module acr './modules/azure-container-registry.bicep' = {
+
+module acr './modules/acr.bicep' = {
   name: 'acrModule'
   params: {
     name: containerRegistryName
@@ -72,7 +78,8 @@ module acr './modules/azure-container-registry.bicep' = {
   }
 }
 
-module appServicePlan './modules/app-service-plan.bicep' = {
+
+module appServicePlan './modules/asp.bicep' = {
   name: 'appServicePlanModule'
   params: {
     name: appServicePlanName
@@ -95,7 +102,7 @@ resource keyvault 'Microsoft.KeyVault/vaults@2023-02-01' existing = {
 
 // Deploy Web App with secrets from Key Vault
 
-module webApp './modules/azure-web-app.bicep' = {
+module webApp './modules/awa.bicep' = {
   name: 'webAppModule'
   params: {
     name: webAppName

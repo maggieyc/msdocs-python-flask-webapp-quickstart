@@ -6,7 +6,7 @@
       "value": "West Europe"
     },
     "containerRegistryName": {
-      "value": "maggieContainerRegistry"
+      "value": "maggieexerciseacr"
     },
     "containerRegistryImageName": {
       "value": "flask-demo"
@@ -15,14 +15,13 @@
       "value": "main"
     },
     "appServicePlanName": {
-      "value": "maggieAppServicePlan"
+      "value": "maggieExerciseAppServicePlan"
     },
     "webAppName": {
-      "value": "maggieWebApp"
-      
+      "value": "maggieExerciseWebApp"
     },
     "keyVaultName": {
-      "value": "maggie-kv-2"
+      "value": "maggieexercise-kv-2"
     }
   }
 }
