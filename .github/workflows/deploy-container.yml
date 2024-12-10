@@ -11,8 +11,8 @@ env: # Replace with your Key Vault name
   REGISTRY_LOGIN_SERVER: "salehexerciseacr.azurecr.io"
   IMAGE_BASE_NAME: "flask-demo"
   RESOURCE_GROUP: "BCSAI2024-DEVOPS-STUDENTS-A-DEV"
-  WEBAPP_NAME: "SalehExerciseWebApp"
-  KEY_VAULT_NAME: "salehexercise-kv-2"
+  WEBAPP_NAME: "maggieWebApp"
+  KEY_VAULT_NAME: "maggie-kv-2"
 
 jobs:
   build-and-push:
