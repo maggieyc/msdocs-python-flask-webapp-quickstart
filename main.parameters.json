@@ -15,10 +15,10 @@
       "value": "main"
     },
     "appServicePlanName": {
-      "value": "MaggieAppServicePlan"
+      "value": "maggieAppServicePlan"
     },
     "webAppName": {
-      "value": "MaggieWebApp"
+      "value": "maggieWebApp"
       
     },
     "keyVaultName": {
