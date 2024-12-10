@@ -1,0 +1,74 @@
+name: Deploy Container App to Azure
+
+on:
+  push:
+    branches:
+      - main
+
+env:                 # Replace with your Key Vault name
+  ACR_USERNAME_SECRET: acrAdminUserName
+  ACR_PASSWORD_SECRET: acrAdminUserPassword1
+  REGISTRY_LOGIN_SERVER: 'maggieexerciseacr.azurecr.io'
+  IMAGE_BASE_NAME: 'flask-demo'
+  RESOURCE_GROUP: 'BCSAI2024-DEVOPS-STUDENTS-A-DEV'
+  WEBAPP_NAME: 'maggieExerciseWebApp'
+  KEY_VAULT_NAME: 'maggieexercise-kv-2'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    outputs:
+      image-version: ${{ steps.image-version.outputs.version }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@main
+
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: 'Get ACR credentials from Azure Key Vault'
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          ACR_USERNAME=$(az keyvault secret show --name ${{ env.ACR_USERNAME_SECRET }} --vault-name ${{ env.KEY_VAULT_NAME }} --query value -o tsv)
+          ACR_PASSWORD=$(az keyvault secret show --name ${{ env.ACR_PASSWORD_SECRET }} --vault-name ${{ env.KEY_VAULT_NAME }} --query value -o tsv)
+          echo "REGISTRY_USERNAME=$ACR_USERNAME" >> $GITHUB_ENV
+          echo "REGISTRY_PASSWORD=$ACR_PASSWORD" >> $GITHUB_ENV
+
+    - name: Debug ACR credentials
+      run: |
+        echo "ACR Username: $REGISTRY_USERNAME"
+        echo "ACR Password Length: ${#REGISTRY_PASSWORD}"
+
+    - name: Login to ACR
+      run: |
+        echo "$REGISTRY_PASSWORD" | docker login $REGISTRY_LOGIN_SERVER -u $REGISTRY_USERNAME --password-stdin
+
+    - name: Set image version
+      id: image-version
+      run: echo "version=${GITHUB_REF#refs/heads/}-$(date +'%Y.%m.%d.%H.%M')" >> $GITHUB_OUTPUT
+
+    - name: Build and Push Docker Image
+      run: |
+        docker build . -t ${{ env.REGISTRY_LOGIN_SERVER }}/${{env.IMAGE_BASE_NAME}}:${{ steps.image-version.outputs.version }}
+        docker tag ${{ env.REGISTRY_LOGIN_SERVER }}/${{env.IMAGE_BASE_NAME}}:${{ steps.image-version.outputs.version }} ${{ env.REGISTRY_LOGIN_SERVER }}/${{env.IMAGE_BASE_NAME}}:latest
+        docker push ${{ env.REGISTRY_LOGIN_SERVER }}/${{env.IMAGE_BASE_NAME}}:${{ steps.image-version.outputs.version }}
+        docker push ${{ env.REGISTRY_LOGIN_SERVER }}/${{env.IMAGE_BASE_NAME}}:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    steps:
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Deploy Docker Image to Azure Web App
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: ${{ env.WEBAPP_NAME }}
+        images: |
+          ${{ env.REGISTRY_LOGIN_SERVER }}/${{ env.IMAGE_BASE_NAME }}:${{ needs.build-and-push.outputs.image-version }}
